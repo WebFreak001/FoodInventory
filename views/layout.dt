@@ -1,0 +1,8 @@
+doctype html
+html
+	head
+		title Fridge Demo
+		link(rel="stylesheet", href="/css/style.css")
+	body
+		block content
+		script(src="/js/fridge.js")

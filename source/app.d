@@ -3,9 +3,10 @@ import db;
 import mongoschema;
 import vibe.vibe;
 
+shared FoodInventory fi;
 void main()
 {
-	auto db = connectMongoDB("mongodb://127.0.0.1/foodinventory");
+	auto db = connectMongoDB("mongodb://127.0.0.1").getDatabase("foodinventory");
 	db["products"].register!Product;
 	db["fridges"].register!Fridge;
 	db["items"].register!FridgeItem;
@@ -16,7 +17,9 @@ void main()
 
 	auto router = new URLRouter;
 	router.get("/", &index);
-	router.registerRestInterface(new FoodInventory);
+	router.get("/fridge", &getFridge);
+	router.post("/fridge", &postFridge);
+	router.registerRestInterface(fi = new FoodInventory);
 	listenHTTP(settings, router);
 
 	runApplication();
@@ -24,5 +27,19 @@ void main()
 
 void index(HTTPServerRequest req, HTTPServerResponse res)
 {
-	res.writeBody("https://github.com/WebFreak001/FoodInventory");
+	res.render!"index.dt";
+}
+
+void getFridge(HTTPServerRequest req, HTTPServerResponse res)
+{
+	auto fridge = fi.getFridge(req.query.get("id"));
+	res.render!("fridge.dt", fridge);
+}
+
+void postFridge(HTTPServerRequest req, HTTPServerResponse res)
+{
+	Fridge fridge;
+	fridge.label = "Unnamed Fridge";
+	fridge.save();
+	res.redirect("/fridge?id=" ~ fridge.bsonID.toString);
 }

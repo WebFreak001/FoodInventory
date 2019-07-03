@@ -1,0 +1,4 @@
+extends layout.dt
+
+block content
+	h1 Your fridge

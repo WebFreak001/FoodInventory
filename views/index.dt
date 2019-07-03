@@ -1,0 +1,7 @@
+extends layout.dt
+
+block content
+	form(action="/fridge", method="GET")
+		p Input your fridge ID:
+		input(type="text", name="fridge", placeholder="000000000000000000000000")
+		input(type="submit")

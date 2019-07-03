@@ -34,8 +34,8 @@ struct FridgeItem
 	string code;
 	string name;
 	string image;
-	SchemaDate storeDate;
-	SchemaDate lastUseDate;
+	SchemaDate storeDate = SchemaDate.now;
+	SchemaDate lastUseDate = SchemaDate.now;
 	SchemaDate expiryDate;
 	double stored = 1;
 	int timesUsed = 0;
