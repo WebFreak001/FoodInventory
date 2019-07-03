@@ -1,0 +1,7 @@
+{
+	"name": "food-inventory",
+	"dependencies": {
+		"vibe-d": "~>0.8.5",
+		"mongoschemad": "~>3.1.0"
+	}
+}
