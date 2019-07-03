@@ -18,7 +18,7 @@ shared:
 	Fridge putFridge(string _id, string label = "");
 
 	@path("/fridge/:id/:code")
-	FridgeItem postFridgeItem(string _id, string _code, int expiryDays, double amount = 1);
+	void postFridgeItem(string _id, string _code, int expiryDays, double amount = 1, int count = 1);
 
 	@path("/fridge/:id/:item")
 	FridgeItem putFridgeItem(string _id, string _item, double useAmount);
@@ -69,24 +69,29 @@ shared class FoodInventory : IFoodInventory
 		return fridge;
 	}
 
-	FridgeItem postFridgeItem(string _id, string _code, int expiryDays, double amount = 1)
+	void postFridgeItem(string _id, string _code, int expiryDays, double amount = 1, int count = 1)
 	{
 		auto fridge = Fridge.tryFindById(_id, Fridge.init);
 		if (!fridge.bsonID.valid)
 			throw new HTTPStatusException(HTTPStatus.notFound, "Fridge with this ID not found");
 
 		auto product = getScan(_code);
+		product.putExpiry(expiryDays);
 
 		FridgeItem item;
 		item.product = product.bsonID;
+		item.fridge = fridge.bsonID;
 		item.code = product.code;
 		item.name = product.name;
 		item.image = product.image;
 		item.expiryDate = SchemaDate.fromSysTime(Clock.currTime + expiryDays.days);
 		item.stored = amount;
-		item.save();
 
-		return item;
+		foreach (i; 0 .. min(count, 10))
+		{
+			item.bsonID = BsonObjectID.generate;
+			item.save();
+		}
 	}
 
 	FridgeItem putFridgeItem(string _id, string _item, double useAmount)
@@ -118,6 +123,18 @@ shared class FoodInventory : IFoodInventory
 			p.image = product["image_front_url"].get!string;
 			p.mainCategory = product["categories_hierarchy"].deserializeJson!(string[])[$ - 1];
 			p.product = product;
+
+			auto existing = Product.aggregate.match(query!Product.mainCategory.eq(p.mainCategory)
+					.numExpirySamples.gte(1)).groupAll([
+					"count": ["$sum": Bson(1)],
+					"expires": ["$avg": Bson("$averageExpiryDays")]
+					]).run;
+			if (existing["count"].get!int > 0)
+			{
+				p.averageExpiryDays = existing["expires"].to!double;
+				p.numExpirySamples = 1; // this is still a different product, so just suggest existing averages
+			}
+
 			p.save();
 		}
 		return p;

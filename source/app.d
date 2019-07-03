@@ -16,10 +16,11 @@ void main()
 	settings.bindAddresses = ["::1", "127.0.0.1"];
 
 	auto router = new URLRouter;
+	router.get("*", serveStaticFiles("public"));
 	router.get("/", &index);
 	router.get("/fridge", &getFridge);
 	router.post("/fridge", &postFridge);
-	router.registerRestInterface(fi = new FoodInventory);
+	router.registerRestInterface(fi = new FoodInventory, "/api");
 	listenHTTP(settings, router);
 
 	runApplication();

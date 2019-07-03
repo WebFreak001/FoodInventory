@@ -17,6 +17,21 @@ struct Product
 	Bson product;
 
 	mixin MongoSchema;
+
+	void putExpiry(int days)
+	{
+		if (days <= 0 || (days >= averageExpiryDays * 2 && numExpirySamples > 3)
+				|| numExpirySamples >= 1000)
+			return;
+
+		averageExpiryDays = (averageExpiryDays * numExpirySamples + days) / (++numExpirySamples);
+		Product.collection.update(["_id": bsonID], [
+				"$set": [
+					"averageExpiryDays": Bson(averageExpiryDays),
+					"numExpirySamples": Bson(numExpirySamples)
+				]
+				]);
+	}
 }
 
 struct Fridge

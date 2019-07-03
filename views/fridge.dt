@@ -1,4 +1,64 @@
 extends layout.dt
 
 block content
-	h1 Your fridge
+	h1= fridge.label
+	h2 #{fridge.items.length} Item(s)
+
+	button(onclick="event.preventDefault(); addItem(); return false;") Add
+
+	.items
+		- foreach (item; fridge.items)
+			.item(data-code=item.code)
+				img(src=item.image)
+				b.name= item.name
+				table.info
+					tr
+						th Expires
+						td.expires.date.relative= item.expiryDate.toISOExtString
+					tr
+						th Used
+						td.used
+							- if (item.timesUsed != 0)
+								span.date.relative= item.lastUseDate.toISOExtString
+								br
+							span.uses #{item.timesUsed} times
+					tr
+						th Bought
+						td.bought.date.relative= item.storeDate.toISOExtString
+
+	#picker(style="display:none")
+		h3 Add product #[span.name name]
+		.body
+			img.image
+			.content
+				p Expires:
+				table.datepicker
+					tr
+						td: button.expr(data-type="year", data-amount="1") +
+						td: button.expr(data-type="month", data-amount="1") +
+						td: button.expr(data-type="day", data-amount="1") +
+					tr
+						td.year
+						td.month
+						td.day
+					tr
+						td: button.expr(data-type="year", data-amount="-1") -
+						td: button.expr(data-type="month", data-amount="-1") -
+						td: button.expr(data-type="day", data-amount="-1") -
+				p Expires in #[span.daysremaining 0] days
+
+				details
+					summary Amounts
+					label
+						span Count
+						input.count(type="number", min="1", max="10", value="1")
+
+					label
+						span Remaining
+						input.remaining(type="range", min="0", max="1", step="0.01", value="1")
+
+		.clear
+		button.cancel Cancel
+		button.save Save
+
+	script var fridgeID = "#{fridge.bsonID}";
