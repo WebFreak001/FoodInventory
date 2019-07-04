@@ -6,6 +6,10 @@ module db;
 import vibe.db.mongo.collection;
 import vibe.data.bson;
 
+import core.time;
+
+import std.datetime.systime;
+
 import mongoschema;
 
 struct Product
@@ -18,6 +22,7 @@ struct Product
 	int numExpirySamples;
 	string api = "v0";
 	Bson product;
+	SchemaDate checkDate = SchemaDate.now;
 
 	mixin MongoSchema;
 
@@ -34,6 +39,11 @@ struct Product
 					"numExpirySamples": Bson(numExpirySamples)
 				]
 				]);
+	}
+
+	bool needsRenew() @property const
+	{
+		return checkDate.time == -1 || Clock.currTime - checkDate.toSysTime > 7.days;
 	}
 }
 

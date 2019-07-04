@@ -9,14 +9,14 @@ body, html {
 
 .dialog {
 	position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    margin: 2em auto;
-    max-width: 800px;
-    background-color: white;
-    padding: 2em;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3), 0 0 0 1000px rgba(0, 0, 0, 0.2);
+	left: 0;
+	top: 0;
+	right: 0;
+	margin: 2em auto;
+	max-width: 800px;
+	background-color: white;
+	padding: 2em;
+	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3), 0 0 0 1000px rgba(0, 0, 0, 0.2);
 }
 
 .dialog .body {
@@ -40,9 +40,7 @@ button.scan {
 
 #picker .image {
 	width: 100%;
-	max-width: 300px;
-	height: 100%;
-	max-height: auto;
+	max-width: 250px;
 	margin-right: 1em;
 	align-self: center;
 }
@@ -61,6 +59,7 @@ button.scan {
 
 #picker .datepicker button {
 	width: 100%;
+	padding: 0.5em 0;
 }
 
 #picker .datepicker tr:nth-child(2) td:nth-child(1):after,
@@ -76,6 +75,23 @@ button.scan {
 	padding: 1em;
 	margin-top: 1em;
 	margin-right: 4pt;
+}
+
+@media screen and (max-width: 500px) {
+	.dialog {
+		padding: 1em;
+	}
+
+	#picker.dialog .body {
+		flex-direction: column;
+	}
+
+	#picker .image {
+		margin: 0.5em auto;
+		flex-grow: 0;
+		flex-shrink: 0;
+		width: 150px;
+	}
 }
 
 label {
@@ -160,6 +176,9 @@ label input {
 	margin: -1em 5pt -1em -1em;
 	overflow: hidden;
 	flex-shrink: 0;
+
+	padding-bottom: 4px;
+	box-shadow: 0 -4px 0 #eee inset;
 }
 
 .items > .item > .image > img {
@@ -193,8 +212,9 @@ label input {
 @media screen and (max-width: 600px) {
 	.items > .item {
 		flex-direction: column;
-		padding-top: 10em;
+		padding-top: 11em;
 		position: relative;
+		margin-bottom: 1em;
 	}
 
 	.items > .item > .image {
@@ -207,6 +227,12 @@ label input {
 		margin: 0;
 		border-top-right-radius: 3pt;
 		border-bottom-left-radius: 0;
+		padding-bottom: 0;
+		box-shadow: none;
+	}
+
+	.items > .item > .actions {
+		flex-direction: row;
 	}
 }
 
@@ -214,4 +240,20 @@ label input {
 	display: block;
 	padding: 1em 0;
 	width: 100%;
+}
+
+footer {
+	margin: 3em 0;
+	text-align: center;
+	color: rgba(0, 0, 0, 0.54);
+}
+
+footer a {
+	color: rgba(0, 98, 155, 0.8);
+}
+footer a:visited {
+	color: rgba(0, 58, 92, 0.8);
+}
+footer a:hover {
+	color: rgba(0, 0, 0, 1);
 }

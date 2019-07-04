@@ -29,7 +29,7 @@ shared:
 	@path("/fridge/:id/:item")
 	FridgeItem deleteFridgeItem(string _id, string _item);
 
-	Product getScan(string code);
+	Product getScan(string code, bool force = false);
 }
 
 shared class FoodInventory : IFoodInventory
@@ -128,35 +128,56 @@ shared class FoodInventory : IFoodInventory
 		return item;
 	}
 
-	Product getScan(string code)
+	Product getScan(string code, bool force = false)
 	{
 		if (!code.length)
 			throw new HTTPStatusException(HTTPStatus.badRequest, "need to specify a value for code");
 
 		Product p = Product.tryFindOne(query!Product.code.eq(code), Product.init);
-		if (!p.code.length)
+		if (force || !p.code.length || p.needsRenew)
 		{
-			Json product = fetchOFFProduct(code);
+			Json product;
+			try
+			{
+				product = fetchOFFProduct(code);
+			}
+			catch (Exception e)
+			{
+				if (p.code.length && !force)
+				{
+					logInfo("Failed updating cache for product %s", p.code);
+					return p;
+				}
+				else
+					throw e;
+			}
 
 			p = Product.init;
 			p.code = code;
 			p.name = product["product_name"].get!string;
-			p.image = product["image_front_url"].get!string;
-			const categories = product["categories_hierarchy"].deserializeJson!(string[]);
-			if (categories.length)
-				p.mainCategory = categories[$ - 1];
+			if ("image_front_url" in product)
+				p.image = product["image_front_url"].get!string;
+
+			if ("categories_hierarchy" in product)
+			{
+				const categories = product["categories_hierarchy"].deserializeJson!(string[]);
+				if (categories.length)
+					p.mainCategory = categories[$ - 1];
+			}
 			p.product = product;
 
-			auto existing = Product.aggregate.match(query!Product.mainCategory.eq(p.mainCategory)
-					.numExpirySamples.gte(1)).groupAll([
-					"count": ["$sum": Bson(1)],
-					"expires": ["$avg": Bson("$averageExpiryDays")]
-					]).run.get!(Bson[]);
-			logInfo("aggregate: %s", existing);
-			if (existing.length == 1 && existing[0]["count"].get!int > 0)
+			if (p.mainCategory.length && p.numExpirySamples == 0)
 			{
-				p.averageExpiryDays = existing[0]["expires"].to!double;
-				p.numExpirySamples = 1; // this is still a different product, so just suggest existing averages
+				auto existing = Product.aggregate.match(query!Product.mainCategory.eq(p.mainCategory)
+						.numExpirySamples.gte(1)).groupAll([
+						"count": ["$sum": Bson(1)],
+						"expires": ["$avg": Bson("$averageExpiryDays")]
+						]).run.get!(Bson[]);
+				if (existing.length == 1 && existing[0]["count"].get!int > 0)
+				{
+					p.averageExpiryDays = existing[0]["expires"].to!double;
+					p.numExpirySamples = 1; // this is still a different product, so just suggest existing averages
+				}
 			}
 
 			p.save();

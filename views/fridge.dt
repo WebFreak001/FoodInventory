@@ -85,4 +85,7 @@ block content
 		button.cancel Cancel
 		button.save Save
 
+	footer
+		p Product data from #[a(href="https://world.openfoodfacts.org") OpenFoodFacts]
+
 	script var fridgeID = "#{fridge.bsonID}";

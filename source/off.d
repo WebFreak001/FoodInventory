@@ -20,7 +20,10 @@ Json fetchOFFProduct(string code)
 
 	Json ret;
 	requestHTTP("https://world.openfoodfacts.org/api/v0/product/" ~ code.encodeComponent ~ ".json",
-			null, (scope res) {
+			(scope req) {
+		req.headers.addField("User-Agent",
+			"FoodInventory Server - 0.1 - https://github.com/WebFreak001/FoodInventory");
+	}, (scope res) {
 		if (res.statusCode != 200)
 			throw new Exception("Got invalid server response");
 		ret = res.readJson;
