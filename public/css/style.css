@@ -190,6 +190,26 @@ label input {
 	margin: 4pt;
 }
 
+@media screen and (max-width: 600px) {
+	.items > .item {
+		flex-direction: column;
+		padding-top: 10em;
+		position: relative;
+	}
+
+	.items > .item > .image {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+		height: 10em;
+		margin: 0;
+		border-top-right-radius: 3pt;
+		border-bottom-left-radius: 0;
+	}
+}
+
 #usage input {
 	display: block;
 	padding: 1em 0;
