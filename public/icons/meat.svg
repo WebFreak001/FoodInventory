@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg99"
+   version="1.1"
+   viewBox="0 0 6.3499998 6.3500002"
+   height="24"
+   width="24">
+  <defs
+     id="defs93" />
+  <metadata
+     id="metadata96">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-290.64998)"
+     id="layer1">
+    <path
+       id="path116"
+       d="m 5.2916667,291.5146 -1.3937872,1.25205 c 0,0 0.2645834,-0.26459 0.5291667,0 0.2645833,0.26458 0,0.52916 0,0.52916 l 1.2520461,-1.35835 c 0,0 0.7364157,-0.17946 0.2598586,-0.64728 -0.5168452,-0.50738 -0.6472842,0.22442 -0.6472842,0.22442 z"
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       id="path118"
+       d="m 3.8978795,292.76665 c -0.2645834,0.26458 -0.79375,0 -1.8520834,0.26458 -1.05833334,0.26458 -1.32291665,0.79375 -1.58749998,1.32292 -0.26458333,0.52916 -0.19507975,1.2009 0.53155924,1.67698 0.72663914,0.47607 1.25282594,0.5763 1.72054764,0.18375 0.4677217,-0.39256 0.3884991,-0.46064 0.6555227,-0.77144 0.3083649,-0.36988 0.5665798,-0.39228 0.7142337,-0.94076 0.126145,-0.46859 0.082303,-0.94228 0.3468867,-1.20687"
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       id="path120"
+       d="m 0.45829612,294.35415 c 0,0 0.26467538,-0.27157 0.52916664,-0.26459 0.44766554,0.0118 0.35708024,0.22425 0.84099704,0.56461 0.4937315,0.34726 0.6945313,0.19961 0.840997,0.57051 0.1464658,0.40041 -0.053153,1.04061 -0.053153,1.04061"
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="0.26458332"
+       cy="295.33731"
+       cx="1.4331077"
+       id="path122"
+       style="fill:none;stroke:#000000;stroke-width:0.26458332" />
+  </g>
+</svg>

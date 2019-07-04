@@ -1,0 +1,46 @@
+Obst & Gemüse: /icons/apple.svg
+	Äpfel: /images/apple.jpg
+	Avocado: /images/avocado.jpg
+	Birnen: /images/pear.jpg
+	Bananen: /images/banana.jpg
+	Erdbeeren: /images/strawberries.jpg
+	Gurke: /images/cucumber.jpg
+	Salat: /images/salad.jpg
+	Tomaten: /images/tomato.jpg
+	Zwiebeln: /images/onion.jpg
+	Anderes Obst: /images/fruits.jpg
+	Anderes Gemüse: /images/vegetables.jpg
+Käse: /icons/cheese.svg
+	Frischkäse: /images/creamcheese.jpg
+	Mozarella: /images/mozarella.jpg
+	Andere Käse: /images/cheese.jpg
+Gebäck: /icons/croissant.svg
+	Brot: /images/bun.jpg
+		Brötchen: /images/bun.jpg
+		Brot: /images/bread.jpg
+	Kuchen: /images/cake.jpg
+		Käsekuchen: /images/cheesecake.jpg
+		Erdbeerkuchen: /images/strawberry-cake.jpg
+		Obsttorte: /images/cake.jpg
+		Andere: /images/othercake.jpg
+Fisch: /icons/fish.svg
+	Lachs: /images/salmon.jpg
+	Forelle: /images/trout.jpg
+	Makrele: /images/mackerel.jpg
+	Andere: /images/sardines.jpg
+Wurst: /icons/sausage.svg
+Fleisch: /icons/meat.svg
+	Huhn: /images/chicken.jpg
+	Rind: /images/beef.jpg
+	Schwein: /images/ham.jpg
+	Lamm: /images/lamb.jpg
+	Pute: /images/hen.jpg
+	Andere: /images/meat.jpg
+Eier: /icons/eggs.svg
+Gerichte: /icons/food.svg
+	Nudelgericht: /images/spaghetti.jpg
+	Fleischgericht: /images/meal.jpg
+	Fischgericht: /images/appetizer.jpg
+	Reisgericht: /images/sushi.jpg
+	Suppe: /images/soup.jpg
+	Bestelltes: /images/burger.jpg
