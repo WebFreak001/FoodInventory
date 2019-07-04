@@ -7,7 +7,7 @@ body, html {
 	clear: both;
 }
 
-#picker {
+.dialog {
 	position: absolute;
     left: 0;
     top: 0;
@@ -19,13 +19,23 @@ body, html {
     box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3), 0 0 0 1000px rgba(0, 0, 0, 0.2);
 }
 
-#picker .body {
+.dialog .body {
 	display: flex;
 	flex-direction: row;
 }
 
-#picker .content {
+.dialog .content {
 	flex-grow: 1;
+}
+
+h1 {
+	text-align: center;
+}
+
+button.scan {
+	margin: auto;
+	display: block;
+	padding: 8pt 32pt;
 }
 
 #picker .image {
@@ -84,14 +94,14 @@ label input {
 	width: 100%;
 }
 
-body > .items {
+.items {
 	display: flex;
 	flex-direction: column;
 	max-width: 800px;
 	margin: 1em auto;
 }
 
-body > .items > .item {
+.items > .item {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -100,20 +110,88 @@ body > .items > .item {
 	background-color: white;
 	border-radius: 3pt;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	position: relative;
 }
 
-body > .items > .item > img {
+.items > .item > .stock {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 4px;
+	border-bottom-left-radius: 3pt;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.items > .item > .stock.stored0 {
+	background-color: rgba(197, 0, 0, 0.5);
+}
+
+.items > .item > .stock.stored1 {
+	background-color: rgba(219, 106, 0, 0.5);
+}
+
+.items > .item > .stock.stored2 {
+	background-color: rgba(255, 230, 0, 0.5);
+}
+
+.items > .item > .stock.stored3 {
+	background-color: rgba(145, 255, 0, 0.5);
+}
+
+.items > .item > .stock.stored4 {
+	background-color: rgba(31, 204, 0, 0.5);
+}
+
+.items > .item > .stock.stored5 {
+	background-color: rgba(31, 204, 0, 0.5);
+	border-bottom-right-radius: 3pt;
+}
+
+.items > .item > .image {
+	width: 12em;
+	align-self: stretch;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: black;
+	border-radius: 3pt;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	margin: -1em 5pt -1em -1em;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.items > .item > .image > img {
 	max-width: 12em;
 	max-height: 10em;
-	margin: -1em 5pt -1em -1em;
 	flex-shrink: 0;
-	border-radius: 3pt;
+	flex-grow: 0;
 }
 
-body > .items > .item > .name {
+.items > .item > .name {
 	flex-grow: 1;
 }
 
-body > .items > .item > table {
+.items > .item > table {
 	flex-shrink: 0;
+}
+
+.items > .item > .actions {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: stretch;
+	align-self: stretch;
+}
+
+.items > .item > .actions > button {
+	flex-grow: 1;
+	margin: 4pt;
+}
+
+#usage input {
+	display: block;
+	padding: 1em 0;
+	width: 100%;
 }

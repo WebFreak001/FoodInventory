@@ -54,6 +54,7 @@ struct FridgeItem
 	SchemaDate expiryDate;
 	double stored = 1;
 	int timesUsed = 0;
+	bool trashed = false;
 
 	mixin MongoSchema;
 

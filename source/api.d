@@ -23,6 +23,9 @@ shared:
 	@path("/fridge/:id/:item")
 	FridgeItem putFridgeItem(string _id, string _item, double useAmount);
 
+	@path("/fridge/:id/:item")
+	FridgeItem deleteFridgeItem(string _id, string _item);
+
 	Product getScan(string code);
 }
 
@@ -34,7 +37,8 @@ shared class FoodInventory : IFoodInventory
 		if (!fridge.bsonID.valid)
 			throw new HTTPStatusException(HTTPStatus.notFound, "Fridge with this ID not found");
 
-		fridge.items = FridgeItem.find(query!FridgeItem.fridge.eq(BsonObjectID.fromString(_id))).array;
+		fridge.items = FridgeItem.find(query!FridgeItem.fridge.eq(BsonObjectID.fromString(_id))
+				.trashed.ne(true)).array;
 		auto now = Clock.currTime;
 		fridge.items.sort!((a, b) {
 			auto aDays = (a.expiryDate.toSysTime() - now).total!"days";
@@ -107,6 +111,20 @@ shared class FoodInventory : IFoodInventory
 		return item;
 	}
 
+	FridgeItem deleteFridgeItem(string _id, string _item)
+	{
+		auto item = FridgeItem.tryFindById(_item, FridgeItem.init);
+		if (item.fridge != BsonObjectID.fromString(_id) || !item.bsonID.valid)
+			throw new HTTPStatusException(HTTPStatus.notFound,
+					"Item with this ID and this fridge not found");
+
+		item.stored = 0;
+		item.trashed = true;
+		item.save();
+
+		return item;
+	}
+
 	Product getScan(string code)
 	{
 		if (!code.length)
@@ -121,17 +139,20 @@ shared class FoodInventory : IFoodInventory
 			p.code = code;
 			p.name = product["product_name"].get!string;
 			p.image = product["image_front_url"].get!string;
-			p.mainCategory = product["categories_hierarchy"].deserializeJson!(string[])[$ - 1];
+			const categories = product["categories_hierarchy"].deserializeJson!(string[]);
+			if (categories.length)
+				p.mainCategory = categories[$ - 1];
 			p.product = product;
 
 			auto existing = Product.aggregate.match(query!Product.mainCategory.eq(p.mainCategory)
 					.numExpirySamples.gte(1)).groupAll([
 					"count": ["$sum": Bson(1)],
 					"expires": ["$avg": Bson("$averageExpiryDays")]
-					]).run;
-			if (existing["count"].get!int > 0)
+					]).run.get!(Bson[]);
+			logInfo("aggregate: %s", existing);
+			if (existing.length == 1 && existing[0]["count"].get!int > 0)
 			{
-				p.averageExpiryDays = existing["expires"].to!double;
+				p.averageExpiryDays = existing[0]["expires"].to!double;
 				p.numExpirySamples = 1; // this is still a different product, so just suggest existing averages
 			}
 
