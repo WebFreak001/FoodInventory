@@ -1,3 +1,6 @@
+// Copyright (C) 2019 Jan Jurzitza
+// Check LICENSE.md for more
+
 import api;
 import db;
 import mongoschema;

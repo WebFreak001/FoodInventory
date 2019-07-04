@@ -1,3 +1,6 @@
+// Copyright (C) 2019 Jan Jurzitza
+// Check LICENSE.md for more
+
 module off;
 
 import vibe.data.json;
