@@ -17,7 +17,13 @@ import std.datetime.systime;
 interface IFoodInventory
 {
 shared:
+	@path("/fridge")
+	Fridge postFridge(string label);
+
+	@path("/fridge/:id")
 	Fridge getFridge(string _id);
+
+	@path("/fridge/:id")
 	Fridge putFridge(string _id, string label = "");
 
 	@path("/fridge/:id/:code")
@@ -34,6 +40,14 @@ shared:
 
 shared class FoodInventory : IFoodInventory
 {
+	Fridge postFridge(string label)
+	{
+		Fridge fridge;
+		fridge.label = label;
+		fridge.save();
+		return fridge;
+	}
+
 	Fridge getFridge(string _id)
 	{
 		auto fridge = Fridge.tryFindById(_id, Fridge.init);
