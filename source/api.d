@@ -20,6 +20,10 @@ shared:
 	@path("/fridge")
 	Fridge postFridge(string label);
 
+	/// Returns fridges based on a comma separated id list
+	@path("/fridges")
+	Fridge[] getFridges(string ids);
+
 	@path("/fridge/:id")
 	Fridge getFridge(string _id);
 
@@ -70,6 +74,13 @@ shared class FoodInventory : IFoodInventory
 		return fridge;
 	}
 
+	Fridge[] getFridges(string ids)
+	{
+		return Fridge.find([
+				"_id": ["$in": ids.splitter(',').map!(BsonObjectID.fromString).array]
+				]);
+	}
+
 	Fridge putFridge(string _id, string label = "")
 	{
 		auto fridge = Fridge.tryFindById(_id, Fridge.init);
@@ -84,8 +95,8 @@ shared class FoodInventory : IFoodInventory
 			change = true;
 		}
 
-		if (change)
-			fridge.save();
+		fridge.lastUse = SchemaDate.now;
+		fridge.save();
 
 		return fridge;
 	}
@@ -98,6 +109,8 @@ shared class FoodInventory : IFoodInventory
 
 		auto product = getScan(_code);
 		product.putExpiry(expiryDays);
+
+		Fridge.didUse(fridge.bsonID);
 
 		FridgeItem item;
 		item.product = product.bsonID;
@@ -122,6 +135,8 @@ shared class FoodInventory : IFoodInventory
 			throw new HTTPStatusException(HTTPStatus.notFound,
 					"Item with this ID and this fridge not found");
 
+		Fridge.didUse(item.fridge);
+
 		item.use(useAmount);
 		item.save();
 
@@ -134,6 +149,8 @@ shared class FoodInventory : IFoodInventory
 		if (item.fridge != BsonObjectID.fromString(_id) || !item.bsonID.valid)
 			throw new HTTPStatusException(HTTPStatus.notFound,
 					"Item with this ID and this fridge not found");
+
+		Fridge.didUse(item.fridge);
 
 		item.stored = 0;
 		item.trashed = true;

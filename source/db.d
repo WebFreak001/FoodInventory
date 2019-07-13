@@ -50,9 +50,17 @@ struct Product
 struct Fridge
 {
 	string label;
+	SchemaDate lastUse = SchemaDate.now;
 	@schemaIgnore FridgeItem[] items;
 
 	mixin MongoSchema;
+
+	static void didUse(BsonObjectID id)
+	{
+		this.collection.update(["_id": id], [
+				"$set": ["lastUse": SchemaDate.toBson(SchemaDate.now)]
+				]);
+	}
 }
 
 struct FridgeItem

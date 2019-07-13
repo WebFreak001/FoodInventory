@@ -29,6 +29,12 @@ Json fetchOFFProduct(string code)
 		ret = res.readJson;
 	});
 	if (ret["status"].get!int != 1)
-		throw new Exception(ret["status_verbose"].get!string);
+	{
+		auto msg = ret["status_verbose"].get!string;
+		if (msg == "product not found")
+			throw new HTTPStatusException(HTTPStatus.notFound, msg);
+		else
+			throw new HTTPStatusException(HTTPStatus.serviceUnavailable, msg);
+	}
 	return ret["product"];
 }
