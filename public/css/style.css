@@ -28,6 +28,110 @@ body, html {
 	flex-grow: 1;
 }
 
+.dialog#addmore {
+	max-width: unset;
+	margin: 0;
+	padding: 1em;
+	height: 100%;
+	position: fixed;
+	border-radius: 0;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	font-size: 2vw;
+}
+
+.dialog#addmore button, .dialog#addmore input {
+	font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
+	font-size: 2vw;
+}
+
+.dialog#addmore > .title {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+.dialog#addmore > .title > button {
+	padding: 1em;
+}
+
+.dialog#addmore h3 {
+	font-size: 1.5em;
+	margin: 0;
+	margin-bottom: 1em;
+	font-weight: 300;
+	flex-grow: 1;
+}
+
+.dialog#addmore h3 > span.name {
+	font-weight: 500;
+}
+
+.dialog#addmore > .body {
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-direction: column;
+}
+
+.dialog#addmore .body > .item,
+.dialog#addmore .body > .buttons {
+	flex-basis: 50%;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+}
+
+.dialog#addmore .body > .item {
+	flex-basis: 60%;
+}
+
+.dialog#addmore .body > .item > .imgwrap {
+	flex-basis: 45%;
+	background-color: black;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+.dialog#addmore .body > .item > .imgwrap > img.image {
+	flex-grow: 0;
+	flex-shrink: 0;
+	max-width: 100%;
+	height: auto;
+	max-height: 100%;
+	width: auto;
+}
+
+.dialog#addmore .body > .item > .details {
+	flex-basis: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.dialog#addmore .body > .item > .scroll {
+	flex-basis: 5%;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.dialog#addmore .body > .item > .scroll > button {
+	flex-grow: 1;
+	margin: 1em 0;
+}
+
+.dialog#addmore .body > .buttons > button {
+	flex-grow: 1;
+	flex-shrink: 0;
+	margin: 1em;
+}
+
 h1 {
 	text-align: center;
 }

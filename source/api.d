@@ -34,7 +34,7 @@ shared:
 	void postFridgeItem(string _id, string _code, int expiryDays, double amount = 1, int count = 1);
 
 	@path("/fridge/:id/:item")
-	FridgeItem putFridgeItem(string _id, string _item, double useAmount);
+	FridgeItem putFridgeItem(string _id, string _item, double amount);
 
 	@path("/fridge/:id/:item")
 	FridgeItem deleteFridgeItem(string _id, string _item);
@@ -60,17 +60,9 @@ shared class FoodInventory : IFoodInventory
 
 		fridge.items = FridgeItem.find(query!FridgeItem.fridge.eq(BsonObjectID.fromString(_id))
 				.trashed.ne(true)).array;
+		// logInfo("Items:\n%(%s\n%)", fridge.items.map!(a => format!"expires=%s, used=%s"));
 		auto now = Clock.currTime;
-		fridge.items.sort!((a, b) {
-			auto aDays = (a.expiryDate.toSysTime() - now).total!"days";
-			auto bDays = (b.expiryDate.toSysTime() - now).total!"days";
-
-			auto dayDifference = aDays - bDays;
-			float dayUseDifference = (a.lastUseDate.toSysTime - b.lastUseDate.toSysTime).total!"hours"
-				/ 24.0f;
-
-			return dayDifference * 10 + dayUseDifference * dayUseDifference < 0;
-		});
+		fridge.items.sort!((a, b) => a.rank(now) < b.rank(now));
 		return fridge;
 	}
 
@@ -128,7 +120,7 @@ shared class FoodInventory : IFoodInventory
 		}
 	}
 
-	FridgeItem putFridgeItem(string _id, string _item, double useAmount)
+	FridgeItem putFridgeItem(string _id, string _item, double amount)
 	{
 		auto item = FridgeItem.tryFindById(_item, FridgeItem.init);
 		if (item.fridge != BsonObjectID.fromString(_id) || !item.bsonID.valid)
@@ -137,7 +129,7 @@ shared class FoodInventory : IFoodInventory
 
 		Fridge.didUse(item.fridge);
 
-		item.use(useAmount);
+		item.useTo(amount);
 		item.save();
 
 		return item;

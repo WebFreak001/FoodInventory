@@ -3,6 +3,7 @@ extends layout.dt
 block content
 	h1 #{fridge.label} - #{fridge.items.length} Item#{fridge.items.length == 1 ? "" : "s"}
 	button.scan(onclick="event.preventDefault(); addItem(); return false;") Scan
+	p#scaninput
 
 	.items
 		- foreach (item; fridge.items)
@@ -30,15 +31,24 @@ block content
 					button.trash(onclick="trashItem(this.parentElement.parentElement)") Trash
 
 	.dialog#addmore(style="display:none")
-		h3 Existing product #[span.name name]
+		.title
+			h3 Existing product #[span.name name]
+			button.close Close
 		.body
-			.content
-				p Product already in fridge, do you want to use it or add another?
+			.item
+				.imgwrap
+					img.image
+				.details
+				.scroll
+					button.up
+						svg(style="width:24px;height:24px", viewBox="0 0 24 24")
+							path(fill="#000000", d="M7,15L12,10L17,15H7Z")
+					button.down
+						svg(style="width:24px;height:24px", viewBox="0 0 24 24")
+							path(fill="#000000", d="M7,10L12,15L17,10H7Z")
+			.buttons
 				button.big.addanother Add another
-				p.or or
-				.items
-		.clear
-		button.cancel Cancel
+				button.big.trash Used up / Trash
 
 	.dialog#usage(style="display:none")
 		h3 Use product #[span.name name]
@@ -86,6 +96,7 @@ block content
 		button.save Save
 
 	footer
-		p Product data from #[a(href="https://world.openfoodfacts.org") OpenFoodFacts]
+		- import std.datetime.systime;
+		p Product data from #[a(href="https://world.openfoodfacts.org") OpenFoodFacts] - #[a(onclick="javascript:window.location.reload()") Refresh] - #{Clock.currTime.toISOExtString}
 
 	script var fridgeID = "#{fridge.bsonID}";

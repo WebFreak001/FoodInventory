@@ -1,0 +1,5 @@
+- bigger count buttons
+- scroll to top
+- loading screen while scanning new product
+- button to add non-barcode things
+- fix big scan again popup only showing half

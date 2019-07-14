@@ -32,6 +32,24 @@ function addItem() {
 	scanItem(item);
 }
 
+var scanPreview = document.getElementById("scaninput");
+document.addEventListener("keydown", function (e) {
+	if (e.key == "Backspace") {
+		e.preventDefault();
+		scanPreview.textContent = scanPreview.textContent.slice(0, -1);
+	} else if (e.key == "Escape") {
+		e.preventDefault();
+		scanPreview.textContent = "";
+	} else if (e.key == "Enter") {
+		e.preventDefault();
+		var code = scanPreview.textContent;
+		scanPreview.textContent = "";
+		scanItem(code);
+	} else if (e.key >= '0' && e.key <= '9') {
+		scanPreview.textContent = scanPreview.textContent + e.key;
+	}
+});
+
 function scanItem(item) {
 	var existing = document.querySelectorAll("body > .items > .item[data-code=\"" + item + "\"]");
 	if (existing.length == 0) {
@@ -57,32 +75,86 @@ function doAdd(item) {
 	xhr.send();
 }
 
-function showExistingDialog(item, name, items) {
+function showExistingDialog(item, name, src) {
 	var dialog = document.getElementById("addmore");
-	var container = dialog.querySelector(".items");
-	while (container.hasChildNodes())
-		container.removeChild(container.lastChild);
+	var details = dialog.querySelector(".details");
+	while (details.hasChildNodes())
+		details.removeChild(details.lastChild);
 	dialog.querySelector(".name").textContent = name;
 
-	function close() {
-		while (container.hasChildNodes())
-			container.removeChild(container.lastChild);
-		dialog.style.display = "none";
+	var items = [];
+	var index = 0;
+	var changedAmount = false;
+
+	function close(force) {
+		if (!force && changedAmount) {
+			didUseItem(items[index].getAttribute("data-id"), parseFloat(items[index].querySelector(".remaining").value));
+		} else {
+			while (details.hasChildNodes())
+				details.removeChild(details.lastChild);
+			dialog.style.display = "none";
+		}
 	}
 
-	for (var i = 0; i < items.length; i++) {
-		var copy = items[i].cloneNode(true);
-		container.appendChild(copy);
-		copy.querySelector(".use").addEventListener("click", close);
-		copy.querySelector(".trash").addEventListener("click", close);
+	var imageSource;
+	for (var i = 0; i < src.length; i++) {
+		var copy = items[i] = src[i].cloneNode(true);
+		copy.querySelector(".image").style.display = "none";
+		copy.querySelector(".name").style.display = "none";
+		imageSource = copy.querySelector(".image img").src;
+		copy.querySelector(".actions").style.display = "none";
+		copy.style.display = index == i ? "" : "none";
+
+		var remaining = document.createElement("label");
+		var label = document.createElement("span");
+		label.textContent = "Remaining";
+		var input = document.createElement("input");
+		input.classList.add("remaining");
+		input.type = "range";
+		input.min = 0;
+		input.max = 1;
+		input.step = 0.01;
+		input.value = parseFloat(copy.getAttribute("data-stored"));
+		input.onchange = function () {
+			changedAmount = true;
+		};
+
+		remaining.appendChild(label);
+		remaining.appendChild(input);
+		copy.appendChild(remaining);
+
+		details.appendChild(copy);
 	}
 
-	dialog.querySelector(".addanother").onclick = function () {
-		close();
+	dialog.querySelector(".image").src = imageSource;
+
+	function updateVisible() {
+		for (var i = 0; i < items.length; i++) {
+			items[i].style.display = index == i ? "" : "none";
+		}
+	}
+
+	dialog.querySelector(".scroll .up").onclick = function () {
+		index = (index + items.length - 1) % items.length;
+		updateVisible();
+	};
+
+	dialog.querySelector(".scroll .down").onclick = function () {
+		index = (index + 1) % items.length;
+		updateVisible();
+	};
+
+	dialog.querySelector(".buttons .addanother").onclick = function () {
+		close(true);
 		doAdd(item);
 	};
 
-	dialog.querySelector(".cancel").onclick = function () {
+	dialog.querySelector(".buttons .trash").onclick = function () {
+		close(true);
+		trashItem(items[index]);
+	};
+
+	dialog.querySelector(".close").onclick = function () {
 		close();
 	};
 
@@ -195,6 +267,24 @@ function trashItem(item) {
 	xhr.send();
 }
 
+function didUseItem(id, amount) {
+	var data = {
+		amount: parseFloat(amount)
+	};
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("PUT", "/api/fridge/" + fridgeID + "/" + id);
+	xhr.onloadend = function () {
+		if (xhr.status == 200)
+			window.location.reload();
+		else
+			alert(JSON.parse(xhr.responseText).statusMessage);
+	};
+
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.send(JSON.stringify(data));
+}
+
 function useItem(item) {
 	var dialog = document.getElementById("usage");
 	var remaining = parseFloat(item.getAttribute("data-stored"));
@@ -209,21 +299,7 @@ function useItem(item) {
 	dialog.querySelector(".save").onclick = function () {
 		dialog.style.display = "none";
 
-		var data = {
-			useAmount: remaining - dialog.querySelector(".remaining").value
-		};
-
-		var xhr = new XMLHttpRequest();
-		xhr.open("PUT", "/api/fridge/" + fridgeID + "/" + id);
-		xhr.onloadend = function () {
-			if (xhr.status == 200)
-				window.location.reload();
-			else
-				alert(JSON.parse(xhr.responseText).statusMessage);
-		};
-
-		xhr.setRequestHeader("Content-Type", "application/json");
-		xhr.send(JSON.stringify(data));
+		didUseItem(id, dialog.querySelector(".remaining").value);
 	};
 
 	dialog.style.display = "";

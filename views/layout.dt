@@ -1,10 +1,11 @@
 doctype html
 html
+	- import vibe.core.file;
 	head
 		meta(charset="utf-8")
 		meta(name="viewport", content="width=device-width, initial-scale=1")
 		title Fridge Demo
-		link(rel="stylesheet", href="/css/style.css")
+		link(rel="stylesheet", href="/css/style.css?dt=#{getFileInfo(`public/css/style.css`).timeModified.toISOExtString}")
 	body
 		block content
-		script(src="/js/fridge.js")
+		script(src="/js/fridge.js?dt=#{getFileInfo(`public/js/fridge.js`).timeModified.toISOExtString}")

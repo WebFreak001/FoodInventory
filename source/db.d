@@ -9,6 +9,7 @@ import vibe.data.bson;
 import core.time;
 
 import std.datetime.systime;
+import std.math;
 
 import mongoschema;
 
@@ -79,10 +80,27 @@ struct FridgeItem
 
 	mixin MongoSchema;
 
-	void use(double amount)
+	void useTo(double amount)
 	{
-		stored -= amount;
+		stored = amount;
 		timesUsed++;
 		lastUseDate = SchemaDate.now;
+	}
+
+	float rank(SysTime now) const
+	{
+		auto expires = expiryDate.time == -1 ? now : expiryDate.toSysTime;
+		auto used = lastUseDate.time == -1 ? now : lastUseDate.toSysTime;
+
+		auto dd = (expires - now).total!"days";
+		auto diff = ((now - used).total!"hours" / 4) / 24.0f;
+
+		float base = (dd < 0 ? dd : pow(dd, 0.6f)) - pow(diff * 0.2f, 1.8f);
+
+		// rank opened products worse
+		if (stored > 0.995 && base > 0)
+			return base;
+		else
+			return pow(base, 0.8f);
 	}
 }
